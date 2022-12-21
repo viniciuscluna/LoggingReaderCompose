@@ -13,8 +13,8 @@ services:
   test-log-ui:
     image: viniciuscluna/test-log-ui
     ports:
-      - "5173:5173"
-  docker-api:
+      - "8080:80"
+  test-log-api:
     image: viniciuscluna/test-log-api
     ports:
       - "5160:80"    
