@@ -1,0 +1,1 @@
+﻿docker build -f "C:\Users\vinic\Documents\Projects\log-test\ViniciusTestLog.API\src\ViniciusTestLog.API\Dockerfile" --force-rm -t viniciuscluna/test-log-api  "C:\Users\vinic\Documents\Projects\log-test\ViniciusTestLog.API" 

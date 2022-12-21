@@ -1,0 +1,6 @@
+Build Image
+docker build -t test-log-ui . 
+Tag Image with dockerHub
+docker tag test-log-ui:latest viniciuscluna/test-log-ui:latest
+Push tag
+docker push viniciuscluna/test-log-ui:latest
