@@ -9,14 +9,17 @@ namespace ViniciusTestLog.API.Services
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMongoRepository _mongoRepository;
-        public LogPersistorService(IMongoRepository mongoRepository, IWebHostEnvironment webHostEnvironment)
+        private readonly ILogger<LogPersistorService> _logger;
+        public LogPersistorService(IMongoRepository mongoRepository, IWebHostEnvironment webHostEnvironment, ILogger<LogPersistorService> logger)
         {
             _mongoRepository = mongoRepository;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
         private async Task<IEnumerable<LogData>> GetLogEntries()
         {
-            var logData = new ConcurrentBag<LogData?>();
+            var logData = new ConcurrentBag<LogData>();
+
             string path = Path.Combine(_webHostEnvironment.WebRootPath, "txt", "auth.log");
 
 
@@ -24,11 +27,18 @@ namespace ViniciusTestLog.API.Services
 
             Parallel.ForEach(lines, logLine =>
             {
-                var convertedLog = logLine.ToLogData();
-                logData.Add(convertedLog);
+                try
+                {
+                    var convertedLog = logLine.ToLogData();
+                    logData.Add(convertedLog);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"{logLine} - {ex.Message}");
+                }
             });
 
-            return logData.Where(f => f != null);
+            return logData;
         }
 
         public async Task PersistLogFile()
@@ -37,7 +47,8 @@ namespace ViniciusTestLog.API.Services
             var logs = await GetLogEntries();
 
             var categories = logs.GroupBy(g => g.Category)
-                .Select(s => { 
+                .Select(s =>
+                {
                     var last = s.LastOrDefault();
                     return new CategoryData
                     {
