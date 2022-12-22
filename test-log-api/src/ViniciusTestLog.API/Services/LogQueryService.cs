@@ -16,7 +16,7 @@ namespace ViniciusTestLog.API.Services
             return (await _mongoRepository.GetAllCategories()).Select(s => s.Name ?? string.Empty).ToArray();
         }
 
-        public async Task<IEnumerable<LogData>> GetFiltered(LogDataFilter logDataFilter)
+        public async Task<IEnumerable<CategoryData>> GetFiltered(LogDataFilter logDataFilter)
         {
             return await _mongoRepository.GetFilteredLogs(logDataFilter);
         }

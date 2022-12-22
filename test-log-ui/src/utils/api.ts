@@ -1,6 +1,6 @@
-import axios, { AxiosError } from "axios"
+import axios from "axios"
 import { FilterData } from "../types/filterData"
-import { LogData } from "../types/logData";
+import { CategoryData } from "../types/logData";
 
 const baseApiUrl = 'http://localhost:5160';
 
@@ -13,7 +13,7 @@ export const postPersistLogs = async (): Promise<void> => {
   return data.data;
 }
 
-export const postFilterData = async (filterData: FilterData): Promise<LogData[]> => {
+export const postFilterData = async (filterData: FilterData): Promise<CategoryData[]> => {
   const data = await instance.post('/api/logging/filter', filterData);
   return data.data;
 }

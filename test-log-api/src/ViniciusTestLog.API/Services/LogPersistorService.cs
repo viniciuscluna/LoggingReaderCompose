@@ -35,9 +35,21 @@ namespace ViniciusTestLog.API.Services
         {
             await _mongoRepository.RemoveAllAsync();
             var logs = await GetLogEntries();
-            await _mongoRepository.CreateBulkLogsAsync(logs);
-            var categories = logs.DistinctBy(d => d.Category).Select(s => new CategoryData { Name = s.Category }).ToArray();
-            await _mongoRepository.CreateBulkCategoriesAsync(categories);
+
+            var categories = logs.GroupBy(g => g.Category)
+                .Select(s => { 
+                    var last = s.LastOrDefault();
+                    return new CategoryData
+                    {
+                        Name = s.Key,
+                        LastIp = last?.Ip ?? "none",
+                        LastDate = last?.Date,
+                        LastMessage = last?.Message ?? "none",
+                        Logs = s
+                    };
+                }).ToArray();
+
+            await _mongoRepository.CreateBulkLogsAsync(categories);
         }
     }
 }

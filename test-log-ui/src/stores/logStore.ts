@@ -1,10 +1,10 @@
 import create from 'zustand'
-import { LogData } from '../types/logData'
+import { CategoryData } from '../types/logData'
 
 interface LogState {
-  logs: LogData[];
-  setLogs: (logs: LogData[]) => void;
-  increaseLogs: (logs: LogData[]) => void;
+  logs: CategoryData[];
+  setLogs: (logs: CategoryData[]) => void;
+  increaseLogs: (logs: CategoryData[]) => void;
   clearLogs: () => void;
 }
 

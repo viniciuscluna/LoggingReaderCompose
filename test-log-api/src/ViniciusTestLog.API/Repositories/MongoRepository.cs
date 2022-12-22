@@ -7,9 +7,7 @@ namespace ViniciusTestLog.API.Repositories
 {
     public class MongoRepository : IMongoRepository
     {
-        private readonly IMongoCollection<LogData> _logsCollection;
-
-        private readonly IMongoCollection<CategoryData> _categoryCollection;
+        private readonly IMongoCollection<CategoryData> _logsCollection;
 
         public MongoRepository(
             IOptions<LoggingDatabaseSettings> logColletionDatabaseSettings)
@@ -20,46 +18,40 @@ namespace ViniciusTestLog.API.Repositories
             var mongoDatabase = mongoClient.GetDatabase(
                 logColletionDatabaseSettings.Value.DatabaseName);
 
-            _logsCollection = mongoDatabase.GetCollection<LogData>(
+            _logsCollection = mongoDatabase.GetCollection<CategoryData>(
                 logColletionDatabaseSettings.Value.LoggingCollectionName);
-
-            _categoryCollection = mongoDatabase.GetCollection<CategoryData>(
-                logColletionDatabaseSettings.Value.CategoryCollectionName);
         }
 
-        public async Task CreateBulkLogsAsync(IEnumerable<LogData> logs) =>
+        public async Task CreateBulkLogsAsync(IEnumerable<CategoryData> logs) =>
             await _logsCollection.InsertManyAsync(logs);
 
-        public async Task CreateLogAsync(LogData log) =>
+        public async Task CreateLogAsync(CategoryData log) =>
             await _logsCollection.InsertOneAsync(log);
 
-        public async Task RemoveAllAsync() =>
-            await _logsCollection.DeleteManyAsync(Builders<LogData>.Filter.Empty);
+        public async Task RemoveAllAsync() => await _logsCollection.DeleteManyAsync(Builders<CategoryData>.Filter.Empty);
+        
 
         public async Task<IEnumerable<CategoryData>> GetAllCategories() =>
-            await _categoryCollection.Find(_ => true).ToListAsync();
+            await _logsCollection.Find(_ => true).ToListAsync();
 
-        public async Task CreateBulkCategoriesAsync(IEnumerable<CategoryData> categories) =>
-            await _categoryCollection.InsertManyAsync(categories);
-
-        public async Task<IEnumerable<LogData>> GetFilteredLogs(LogDataFilter filter)
+        public async Task<IEnumerable<CategoryData>> GetFilteredLogs(LogDataFilter filter)
         {
-            var filters = new List<FilterDefinition<LogData>>();
+            var filters = new List<FilterDefinition<CategoryData>>();
 
             if (!string.IsNullOrEmpty(filter.Ip))
-                filters.Add(Builders<LogData>.Filter.Where(f => f.Ip.ToLower().Contains(filter.Ip.ToLower())));
+                filters.Add(Builders<CategoryData>.Filter.Where(f => f.Logs.Any(f2=> f2.Ip.ToLower().Contains(filter.Ip.ToLower()))));
             if (!string.IsNullOrEmpty(filter.Category))
-                filters.Add(Builders<LogData>.Filter.Where(f => f.Category.ToLower().Contains(filter.Category.ToLower())));
+                filters.Add(Builders<CategoryData>.Filter.Where(f => f.Logs.Any(f2 => f2.Category.ToLower().Contains(filter.Category.ToLower()))));
             if (!string.IsNullOrEmpty(filter.Message))
-                filters.Add(Builders<LogData>.Filter.Where(f => f.Message.ToLower().Contains(filter.Message.ToLower())));
+                filters.Add(Builders<CategoryData>.Filter.Where(f => f.Logs.Any(f2 => f2.Message.ToLower().Contains(filter.Message.ToLower()))));
             if (filter.Start != null)
-                filters.Add(Builders<LogData>.Filter.Gte(f => f.Date, filter.Start));
+                filters.Add(Builders<CategoryData>.Filter.Gte(f => f.LastDate, filter.Start));
             if (filter.Start != null)
-                filters.Add(Builders<LogData>.Filter.Lt(f => f.Date, filter.End));
+                filters.Add(Builders<CategoryData>.Filter.Lt(f => f.LastDate, filter.End));
 
             if (filters.Any())
             {
-                var filterMongo = Builders<LogData>.Filter.And(filters);
+                var filterMongo = Builders<CategoryData>.Filter.And(filters);
                 return await _logsCollection.Find(filterMongo).Skip((filter.Page - 1) * filter.Quantity).Limit(filter.Quantity).ToListAsync();
             }
             else return await _logsCollection.Find(_ => true).Skip((filter.Page - 1) * filter.Quantity).Limit(filter.Quantity).ToListAsync();

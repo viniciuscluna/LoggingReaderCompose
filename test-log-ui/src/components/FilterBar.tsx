@@ -13,7 +13,7 @@ const FilterBar = () => {
     const [ipFilter, setIpFilter] = useState<string>('');
     const [startFilter, setStartFilter] = useState<string>('');
     const [endFilter, setEndFilter] = useState<string>('');
-    const [quantityFilter, setQuantityFilter] = useState<number>(50);
+    const [quantityFilter, setQuantityFilter] = useState<number>(25);
     const setLogs = useLogStore((state) => state.setLogs);
     const [filter, setFilter] = useFilterStore((state) => [state.filter, state.setFilter]);
 
@@ -134,6 +134,9 @@ const FilterBar = () => {
                             type="select"
                             onChange={(e) => setQuantityFilter(parseInt(e.target.value))}
                         >
+                            <option>
+                                25
+                            </option>
                             <option>
                                 50
                             </option>

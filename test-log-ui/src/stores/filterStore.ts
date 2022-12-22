@@ -6,7 +6,7 @@ const defaultState: FilterData = {
     ip: '',
     message: '',
     page: 0,
-    quantity: 50,
+    quantity: 25,
     end: null,
     start: null,
     initialState: true

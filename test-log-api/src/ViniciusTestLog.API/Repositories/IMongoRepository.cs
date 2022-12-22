@@ -5,11 +5,10 @@ namespace ViniciusTestLog.API.Repositories
 {
     public interface IMongoRepository
     {
-        Task CreateBulkLogsAsync(IEnumerable<LogData> logs);
-        Task CreateBulkCategoriesAsync(IEnumerable<CategoryData> categories);
-        Task CreateLogAsync(LogData log);
+        Task CreateBulkLogsAsync(IEnumerable<CategoryData> logs);
+        Task CreateLogAsync(CategoryData log);
         Task RemoveAllAsync();
         Task<IEnumerable<CategoryData>> GetAllCategories();
-        Task<IEnumerable<LogData>> GetFilteredLogs(LogDataFilter filter);
+        Task<IEnumerable<CategoryData>> GetFilteredLogs(LogDataFilter filter);
     }
 }

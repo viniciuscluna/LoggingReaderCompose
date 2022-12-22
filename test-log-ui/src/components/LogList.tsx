@@ -1,13 +1,14 @@
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { Button, Table } from "reactstrap";
+import { Badge, Button, Col, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Row } from "reactstrap";
 import { useFilterStore } from "../stores/filterStore";
 import { useLogStore } from "../stores/logStore";
 import { postFilterData } from "../utils/api";
+import LogItems from "./LogItems";
 
 const LogList = () => {
 
-    const [logs, increaseLogs] = useLogStore((state) => [state.logs, state.increaseLogs]);
+    const [logsCategories, increaseLogs] = useLogStore((state) => [state.logs, state.increaseLogs]);
     const [filter, increasePage] = useFilterStore((state) => [state.filter, state.increasePage]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -33,49 +34,27 @@ const LogList = () => {
     const loadMore = () => increasePage();
 
     return (
-        <Table>
-            <thead>
-                <tr>
-                    <th>
-                        Date
-                    </th>
-                    <th>
-                        Ip
-                    </th>
-                    <th>
-                        Category
-                    </th>
-                    <th>
-                        Message
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {logs.map((log, index) =>
-                    <tr key={index}>
-                        <th scope="row">
-                            {log.date}
-                        </th>
-                        <td>
-                            {log.ip}
-                        </td>
-                        <td>
-                            {log.category}
-                        </td>
-                        <td>
-                            {log.message}
-                        </td>
-                    </tr>
+        <>
+            <ListGroup className="mt-2">
+                {logsCategories.map((category, index) =>
+                    <ListGroupItem key={index}>
+                        <ListGroupItemHeading>
+                            <div className="text-center">
+                           Last Date: {category.lastDate} - Last Ip: {category.lastIp} - Last Message: {category.lastMessage} <Badge>{category.name}</Badge>
+                           </div>
+                        </ListGroupItemHeading>
+                        <ListGroupItemText>
+                            <LogItems logs={category.logs} />
+                        </ListGroupItemText>
+                    </ListGroupItem>
                 )}
-
-                <tr>
-                    <th colSpan={4} scope="row" className="text-center">
-                        <Button disabled={isLoading || !filter.initialState} block size="sm" onClick={loadMore}> Load more... </Button>
-                    </th>
-
-                </tr>
-            </tbody>
-        </Table>
+            </ListGroup>
+            <Row className="mt-2">
+                <Col>
+                    <Button disabled={isLoading || !filter.initialState} block size="sm" onClick={loadMore}> Load more... </Button>
+                </Col>
+            </Row>
+        </>
     )
 }
 

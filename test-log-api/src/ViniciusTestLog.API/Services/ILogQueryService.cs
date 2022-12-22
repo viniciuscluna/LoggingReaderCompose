@@ -6,7 +6,7 @@ namespace ViniciusTestLog.API.Services
     public interface ILogQueryService
     {
         Task<string[]> GetCategories();
-        Task<IEnumerable<LogData>> GetFiltered(LogDataFilter logDataFilter);
+        Task<IEnumerable<CategoryData>> GetFiltered(LogDataFilter logDataFilter);
 
     }
 }

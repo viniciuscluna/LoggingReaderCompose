@@ -7,6 +7,5 @@
         public string DatabaseName { get; set; } = null!;
 
         public string LoggingCollectionName { get; set; } = null!;
-        public string CategoryCollectionName { get; set; } = null!;
     }
 }
