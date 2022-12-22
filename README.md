@@ -6,7 +6,7 @@
 
 ***First at all, make sure you have Docker installed***
 
- - Clone this project inside you machine
+ - Clone this project inside your machine
  - Run the following command: `docker compose up`
  - UI App should be available on [UI link](http://localhost:8080/)
  - API App should be available on [API link](http://localhost:5160/swagger/)
